@@ -5,31 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI Clip Maker</title>
   <style>
-    /*
-      AI Clip Maker — demo interface in one HTML file.
-      Цвета проекта:
-      background: #050816
-      cards: #0B1020
-      accent: #6C63FF
-      muted text: #94A3B8
-      white: #FFFFFF
-    */
-
     :root {
       --bg: #050816;
-      --card: #0B1020;
-      --card-soft: #111827;
+      --card: rgba(11, 16, 32, 0.78);
+      --card2: rgba(17, 24, 39, 0.72);
       --accent: #6C63FF;
-      --accent-2: #8B85FF;
+      --pink: #FF9FFC;
+      --violet: #B497CF;
       --text: #FFFFFF;
       --muted: #94A3B8;
-      --line: rgba(148, 163, 184, 0.22);
+      --line: rgba(255, 255, 255, 0.12);
       --success: #22C55E;
-      --shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
-      --radius-xl: 28px;
-      --radius-lg: 20px;
-      --radius-md: 14px;
-      --container: 1180px;
+      --radius: 28px;
+      --shadow: 0 30px 90px rgba(0,0,0,.55);
     }
 
     * { box-sizing: border-box; }
@@ -37,133 +25,295 @@
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
       color: var(--text);
-      background:
-        radial-gradient(circle at 20% 10%, rgba(108, 99, 255, 0.18), transparent 32%),
-        radial-gradient(circle at 90% 70%, rgba(108, 99, 255, 0.16), transparent 30%),
-        var(--bg);
+      background: var(--bg);
       overflow-x: hidden;
     }
 
-    a { color: inherit; }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: -20%;
+      z-index: -3;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(82, 39, 255, .48), transparent 28%),
+        radial-gradient(circle at 80% 15%, rgba(255, 159, 252, .28), transparent 26%),
+        radial-gradient(circle at 65% 80%, rgba(180, 151, 207, .32), transparent 30%),
+        #050816;
+      animation: aurora 13s ease-in-out infinite alternate;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background-image:
+        linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
+      background-size: 46px 46px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,.9), transparent 80%);
+    }
+
+    @keyframes aurora {
+      0% { transform: translate3d(0,0,0) scale(1); filter: hue-rotate(0deg); }
+      100% { transform: translate3d(-4%, 3%, 0) scale(1.08); filter: hue-rotate(18deg); }
+    }
 
     .page {
-      width: min(var(--container), calc(100% - 40px));
+      width: min(1180px, calc(100% - 36px));
       margin: 0 auto;
-      padding: 46px 0 70px;
+      padding: 34px 0 70px;
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 52px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent), var(--pink));
+      box-shadow: 0 0 34px rgba(108, 99, 255, .65);
+    }
+
+    .badge {
+      padding: 10px 16px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.82);
+      font-size: 13px;
+      font-weight: 800;
+      backdrop-filter: blur(12px);
     }
 
     .hero {
       display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 32px;
-      align-items: start;
-      margin-bottom: 58px;
+      grid-template-columns: 1.08fr .92fr;
+      gap: 34px;
+      align-items: center;
+      margin-bottom: 30px;
     }
 
-    .logo {
-      margin: 0 0 18px;
-      font-size: clamp(46px, 7vw, 78px);
-      line-height: 0.96;
-      letter-spacing: -0.06em;
-      font-weight: 900;
+    .hero-card, .panel, .clip-card {
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(11,16,32,.82), rgba(11,16,32,.56));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(22px);
     }
 
-    .logo span { color: var(--accent); }
+    .hero-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 36px;
+      padding: clamp(26px, 5vw, 54px);
+    }
+
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      width: 340px;
+      height: 340px;
+      right: -90px;
+      top: -130px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(255,159,252,.42), transparent 68%);
+      filter: blur(5px);
+    }
+
+    h1 {
+      position: relative;
+      margin: 0 0 20px;
+      font-size: clamp(48px, 8vw, 92px);
+      line-height: .9;
+      letter-spacing: -0.08em;
+      font-weight: 950;
+    }
+
+    h1 span {
+      background: linear-gradient(135deg, #fff, #d8d5ff 42%, var(--pink));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
 
     .subtitle {
-      max-width: 760px;
-      margin: 0;
+      position: relative;
+      max-width: 720px;
+      margin: 0 0 28px;
       color: var(--muted);
-      font-size: clamp(18px, 2vw, 25px);
+      font-size: clamp(17px, 2vw, 23px);
       line-height: 1.55;
       font-weight: 650;
     }
 
-    .status {
-      display: inline-flex;
-      align-items: center;
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
       gap: 14px;
-      padding: 18px 26px;
-      margin-top: 92px;
+      align-items: center;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 17px;
+      padding: 15px 22px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--accent), #8B5CF6);
+      box-shadow: 0 16px 40px rgba(108,99,255,.38);
+      font-weight: 900;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .btn:hover { transform: translateY(-2px); filter: brightness(1.08); }
+
+    .btn.secondary {
       border: 1px solid var(--line);
-      border-radius: 20px;
-      background: rgba(11, 16, 32, 0.68);
-      color: rgba(255, 255, 255, 0.86);
-      font-weight: 850;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      box-shadow: 0 10px 32px rgba(0, 0, 0, 0.24);
-      white-space: nowrap;
+      background: rgba(255,255,255,.07);
+      box-shadow: none;
     }
 
-    .status-dot {
-      width: 16px;
-      height: 16px;
+    .phone {
+      position: relative;
+      min-height: 520px;
+      border-radius: 38px;
+      padding: 18px;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.18);
+      box-shadow: 0 30px 90px rgba(0,0,0,.45), 0 0 70px rgba(108,99,255,.22);
+    }
+
+    .phone-screen {
+      height: 100%;
+      min-height: 484px;
+      border-radius: 28px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 45% 20%, rgba(255,159,252,.35), transparent 26%),
+        linear-gradient(145deg, #111827, #050816);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 22px;
+      border: 1px solid rgba(255,255,255,.12);
+    }
+
+    .video-label {
+      align-self: flex-start;
+      padding: 8px 12px;
       border-radius: 999px;
-      background: #10B981;
-      box-shadow: 0 0 24px rgba(16, 185, 129, 0.85);
+      background: rgba(34,197,94,.14);
+      color: #A7F3D0;
+      font-weight: 900;
+      font-size: 12px;
     }
 
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 24px;
+    .video-title {
+      font-size: 44px;
+      line-height: .92;
+      font-weight: 950;
+      letter-spacing: -0.07em;
     }
+
+    .subtitle-strip {
+      padding: 13px 14px;
+      border-radius: 14px;
+      background: rgba(0,0,0,.46);
+      color: #fff;
+      text-align: center;
+      font-weight: 850;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin: 22px 0 30px;
+    }
+
+    .stat {
+      padding: 18px;
+      border-radius: 22px;
+      background: rgba(255,255,255,.07);
+      border: 1px solid var(--line);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+
+    .stat span { color: var(--muted); font-size: 13px; }
 
     .panel {
-      border: 1px solid rgba(148, 163, 184, 0.13);
-      border-radius: var(--radius-xl);
-      background: rgba(11, 16, 32, 0.82);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(16px);
+      border-radius: var(--radius);
+      padding: clamp(20px, 4vw, 36px);
+      margin-top: 22px;
     }
-
-    .upload-card { padding: clamp(24px, 4vw, 40px); }
 
     .dropzone {
       position: relative;
+      min-height: 250px;
+      border: 2px dashed rgba(255,255,255,.24);
+      border-radius: 24px;
+      background: rgba(255,255,255,.045);
       display: grid;
       place-items: center;
-      min-height: 285px;
-      border: 2px dashed rgba(148, 163, 184, 0.38);
-      border-radius: 22px;
-      background: rgba(5, 8, 22, 0.44);
       text-align: center;
       cursor: pointer;
-      transition: 0.25s ease;
+      transition: .25s ease;
+      overflow: hidden;
     }
 
-    .dropzone:hover,
-    .dropzone.dragover {
-      border-color: var(--accent-2);
-      background: rgba(108, 99, 255, 0.08);
-      transform: translateY(-2px);
+    .dropzone::before {
+      content: "";
+      position: absolute;
+      width: 180px;
+      height: 180px;
+      border-radius: 999px;
+      background: rgba(108,99,255,.22);
+      filter: blur(22px);
+      animation: pulse 2.8s ease-in-out infinite;
     }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(.9); opacity: .65; }
+      50% { transform: scale(1.15); opacity: 1; }
+    }
+
+    .dropzone:hover {
+      border-color: var(--pink);
+      transform: translateY(-2px);
+      background: rgba(108,99,255,.08);
+    }
+
+    .drop-inner { position: relative; z-index: 1; }
 
     .upload-icon {
-      width: 82px;
-      height: 82px;
+      width: 78px;
+      height: 78px;
+      margin: 0 auto 18px;
+      border-radius: 22px;
       display: grid;
       place-items: center;
-      margin: 0 auto 22px;
-      border-radius: 20px;
-      background: rgba(148, 163, 184, 0.14);
-      color: var(--accent-2);
-    }
-
-    .drop-title {
-      margin: 0 0 8px;
-      font-size: 24px;
-      font-weight: 850;
-    }
-
-    .drop-text {
-      margin: 0;
-      color: #718096;
-      font-size: 18px;
-      font-weight: 600;
+      background: linear-gradient(135deg, rgba(108,99,255,.42), rgba(255,159,252,.18));
+      box-shadow: 0 0 36px rgba(108,99,255,.36);
     }
 
     .file-input {
@@ -173,59 +323,42 @@
       cursor: pointer;
     }
 
+    .drop-title {
+      margin: 0 0 8px;
+      font-size: 24px;
+      font-weight: 900;
+    }
+
+    .drop-text {
+      margin: 0;
+      color: var(--muted);
+      font-weight: 650;
+    }
+
     .selected-file {
       display: none;
-      margin-top: 22px;
-      padding: 22px;
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 20px;
+      background: rgba(255,255,255,.07);
       border: 1px solid var(--line);
-      border-radius: var(--radius-lg);
-      background: rgba(17, 24, 39, 0.72);
-      align-items: center;
       justify-content: space-between;
-      gap: 18px;
+      align-items: center;
+      gap: 16px;
     }
 
     .selected-file.active { display: flex; }
 
     .file-name {
       margin: 0 0 4px;
-      font-weight: 800;
+      font-weight: 900;
       word-break: break-word;
     }
 
-    .file-hint {
-      margin: 0;
-      color: var(--muted);
-      font-size: 14px;
-    }
+    .file-hint { margin: 0; color: var(--muted); font-size: 14px; }
 
-    .btn {
-      border: 0;
-      border-radius: 16px;
-      padding: 15px 22px;
-      background: linear-gradient(135deg, var(--accent), #8B5CF6);
-      color: white;
-      font-size: 15px;
-      font-weight: 850;
-      cursor: pointer;
-      box-shadow: 0 14px 30px rgba(108, 99, 255, 0.28);
-      transition: 0.2s ease;
-      white-space: nowrap;
-    }
-
-    .btn:hover { transform: translateY(-1px); filter: brightness(1.08); }
-    .btn:active { transform: translateY(0); }
-
-    .btn.secondary {
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid var(--line);
-      box-shadow: none;
-    }
-
-    .processing,
-    .results { display: none; }
-    .processing.active,
-    .results.active { display: block; }
+    .processing, .results { display: none; }
+    .processing.active, .results.active { display: block; }
 
     .section-head {
       display: flex;
@@ -237,245 +370,240 @@
 
     .section-title {
       margin: 0;
-      font-size: clamp(26px, 4vw, 38px);
-      letter-spacing: -0.04em;
+      font-size: clamp(28px, 4vw, 42px);
+      letter-spacing: -0.055em;
     }
 
     .section-desc {
-      margin: 6px 0 0;
+      margin: 7px 0 0;
       color: var(--muted);
-      line-height: 1.5;
+      line-height: 1.55;
     }
 
-    .processing-card { padding: clamp(24px, 4vw, 36px); }
-
     .progress-wrap {
-      margin-top: 26px;
-      padding: 24px;
+      padding: 22px;
       border-radius: 22px;
-      background: rgba(5, 8, 22, 0.45);
+      background: rgba(0,0,0,.22);
       border: 1px solid var(--line);
     }
 
     .progress-meta {
       display: flex;
       justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 14px;
       color: var(--muted);
-      font-weight: 750;
+      font-weight: 850;
+      margin-bottom: 14px;
     }
 
     .progress-bar {
-      height: 14px;
-      overflow: hidden;
+      height: 15px;
+      background: rgba(255,255,255,.1);
       border-radius: 999px;
-      background: rgba(148, 163, 184, 0.15);
+      overflow: hidden;
     }
 
     .progress-fill {
       width: 0%;
       height: 100%;
       border-radius: inherit;
-      background: linear-gradient(90deg, var(--accent), #22C55E);
-      transition: width 0.45s ease;
+      background: linear-gradient(90deg, var(--accent), var(--pink), var(--success));
+      box-shadow: 0 0 24px rgba(255,159,252,.45);
+      transition: width .35s ease;
     }
 
-    .steps {
+    .steps, .clips {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
+      gap: 16px;
       margin-top: 20px;
     }
 
     .step {
       padding: 16px;
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.045);
-      border: 1px solid rgba(148, 163, 184, 0.12);
-      color: var(--muted);
-      font-weight: 700;
-    }
-
-    .step.active { color: white; border-color: rgba(108, 99, 255, 0.55); }
-
-    .results-card { padding: clamp(24px, 4vw, 36px); }
-
-    .clips {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 18px;
-      margin-top: 24px;
-    }
-
-    .clip-card {
-      padding: 20px;
-      border-radius: 22px;
-      border: 1px solid rgba(148, 163, 184, 0.14);
-      background: linear-gradient(180deg, rgba(17, 24, 39, 0.92), rgba(5, 8, 22, 0.78));
-      transition: 0.2s ease;
-    }
-
-    .clip-card:hover { transform: translateY(-3px); border-color: rgba(108, 99, 255, 0.48); }
-
-    .clip-preview {
-      display: grid;
-      place-items: center;
-      height: 210px;
       border-radius: 18px;
-      margin-bottom: 18px;
-      background:
-        radial-gradient(circle at 40% 25%, rgba(108, 99, 255, 0.36), transparent 32%),
-        linear-gradient(145deg, #0B1020, #050816);
-      border: 1px solid rgba(255, 255, 255, 0.07);
-      color: rgba(255, 255, 255, 0.8);
-      font-weight: 900;
-      letter-spacing: 0.08em;
-    }
-
-    .clip-title {
-      margin: 0 0 8px;
-      font-size: 18px;
-      font-weight: 850;
-    }
-
-    .timecode {
-      display: inline-flex;
-      margin-bottom: 12px;
-      padding: 7px 10px;
-      border-radius: 999px;
-      color: #DDD9FF;
-      background: rgba(108, 99, 255, 0.16);
-      font-size: 13px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.055);
+      color: var(--muted);
       font-weight: 800;
     }
 
+    .step.active {
+      color: #fff;
+      border-color: rgba(255,159,252,.45);
+      box-shadow: 0 0 28px rgba(108,99,255,.18);
+    }
+
+    .clip-card {
+      border-radius: 24px;
+      padding: 18px;
+      transition: .22s ease;
+    }
+
+    .clip-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255,159,252,.42);
+      box-shadow: 0 24px 70px rgba(108,99,255,.22);
+    }
+
+    .clip-preview {
+      height: 230px;
+      border-radius: 20px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 16px;
+      background:
+        radial-gradient(circle at 35% 20%, rgba(255,159,252,.34), transparent 30%),
+        linear-gradient(145deg, rgba(108,99,255,.34), rgba(5,8,22,.9));
+      border: 1px solid rgba(255,255,255,.12);
+      color: rgba(255,255,255,.9);
+      font-weight: 950;
+      letter-spacing: .08em;
+    }
+
+    .clip-title { margin: 0 0 9px; font-size: 18px; }
+    .timecode {
+      display: inline-block;
+      margin-bottom: 12px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: rgba(108,99,255,.18);
+      color: #E9D5FF;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
     .clip-desc {
-      min-height: 64px;
-      margin: 0 0 18px;
+      min-height: 66px;
       color: var(--muted);
       line-height: 1.5;
       font-size: 14px;
     }
 
     .footer-note {
-      margin-top: 26px;
-      color: rgba(148, 163, 184, 0.78);
-      font-size: 14px;
       text-align: center;
+      color: rgba(148,163,184,.78);
+      margin-top: 26px;
+      font-size: 14px;
     }
 
     @media (max-width: 900px) {
-      .hero { grid-template-columns: 1fr; margin-bottom: 34px; }
-      .status { margin-top: 0; width: fit-content; }
-      .clips { grid-template-columns: 1fr 1fr; }
-      .steps { grid-template-columns: 1fr; }
+      .hero { grid-template-columns: 1fr; }
+      .phone { min-height: 430px; }
+      .phone-screen { min-height: 394px; }
+      .clips, .steps, .stats { grid-template-columns: 1fr; }
+      .selected-file, .section-head { flex-direction: column; align-items: stretch; }
     }
 
-    @media (max-width: 620px) {
-      .page { width: min(100% - 28px, var(--container)); padding-top: 28px; }
-      .logo { font-size: 44px; }
-      .subtitle { font-size: 17px; }
-      .upload-card, .processing-card, .results-card { padding: 18px; border-radius: 22px; }
-      .dropzone { min-height: 240px; padding: 18px; }
-      .selected-file { align-items: stretch; flex-direction: column; }
-      .selected-file .btn { width: 100%; }
-      .section-head { align-items: flex-start; flex-direction: column; }
-      .clips { grid-template-columns: 1fr; }
-      .clip-preview { height: 190px; }
+    @media (max-width: 560px) {
+      .page { width: min(100% - 24px, 1180px); padding-top: 22px; }
+      .nav { margin-bottom: 28px; }
+      .badge { display: none; }
+      h1 { font-size: 48px; }
+      .hero-card, .panel { border-radius: 24px; }
+      .video-title { font-size: 36px; }
     }
   </style>
 </head>
 <body>
   <main class="page">
-    <!-- Первый экран сервиса -->
-    <header class="hero">
-      <div>
-        <h1 class="logo">AI CLIP <span>MAKER</span></h1>
-        <p class="subtitle">Загрузите длинное видео — AI найдёт самые сильные моменты и подготовит короткие вертикальные клипы для Reels, Shorts и TikTok.</p>
+    <nav class="nav">
+      <div class="brand">
+        <div class="brand-mark"></div>
+        <div>AI Clip Maker</div>
       </div>
+      <div class="badge">Demo version · GitHub Pages</div>
+    </nav>
 
-      <div class="status" aria-label="System online">
-        <span class="status-dot"></span>
-        System online
-      </div>
-    </header>
+    <section class="hero">
+      <div class="hero-card">
+        <h1>AI CLIP <span>MAKER</span></h1>
+        <p class="subtitle">Демо сервиса для автоматической нарезки длинных видео на короткие вертикальные клипы для Reels, Shorts и TikTok.</p>
 
-    <section class="grid">
-      <!-- Зона загрузки видео -->
-      <div class="panel upload-card" id="uploadPanel">
-        <label class="dropzone" id="dropzone">
-          <input class="file-input" id="videoInput" type="file" accept="video/mp4,video/quicktime,video/webm" />
-          <div>
-            <div class="upload-icon" aria-hidden="true">
-              <svg width="38" height="38" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 15V3M12 3L7 8M12 3L17 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M4 15V18C4 19.657 5.343 21 7 21H17C18.657 21 20 19.657 20 18V15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              </svg>
-            </div>
-            <p class="drop-title">Выберите видео для нарезки</p>
-            <p class="drop-text">MP4, MOV, WEBM до 500MB</p>
-          </div>
-        </label>
+        <div class="hero-actions">
+          <button class="btn" onclick="document.getElementById('uploadPanel').scrollIntoView({behavior:'smooth'})">Попробовать демо</button>
+          <button class="btn secondary" onclick="document.getElementById('resultsPanel').classList.add('active'); document.getElementById('resultsPanel').scrollIntoView({behavior:'smooth'})">Посмотреть карточки</button>
+        </div>
 
-        <!-- Блок появляется после выбора файла -->
-        <div class="selected-file" id="selectedFile">
-          <div>
-            <p class="file-name" id="fileName">video.mp4</p>
-            <p class="file-hint">Файл загружен. Можно запускать AI-анализ.</p>
-          </div>
-          <button class="btn" id="startBtn">Запустить анализ</button>
+        <div class="stats">
+          <div class="stat"><strong>9:16</strong><span>вертикальный формат</span></div>
+          <div class="stat"><strong>AI</strong><span>поиск сильных моментов</span></div>
+          <div class="stat"><strong>3+</strong><span>демо-клипа после анализа</span></div>
         </div>
       </div>
 
-      <!-- Экран обработки видео -->
-      <div class="panel processing processing-card" id="processingPanel">
-        <div class="section-head">
-          <div>
-            <h2 class="section-title">AI анализирует видео</h2>
-            <p class="section-desc">Ищем цепляющие фрагменты, смысловые пики и готовим клипы для вертикальных площадок.</p>
-          </div>
-          <button class="btn secondary" id="cancelBtn">Отменить</button>
-        </div>
-
-        <div class="progress-wrap">
-          <div class="progress-meta">
-            <span id="progressText">Загрузка видео</span>
-            <span id="progressPercent">0%</span>
-          </div>
-          <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-
-          <div class="steps">
-            <div class="step active" id="step1">1. Распознаём речь</div>
-            <div class="step" id="step2">2. Ищем сильные моменты</div>
-            <div class="step" id="step3">3. Готовим клипы</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Страница найденных клипов -->
-      <div class="panel results results-card" id="resultsPanel">
-        <div class="section-head">
-          <div>
-            <h2 class="section-title">Найденные клипы</h2>
-            <p class="section-desc">Количество клипов может быть любым — оно зависит от длины видео и результатов AI-анализа.</p>
-          </div>
-          <button class="btn secondary" id="newVideoBtn">Загрузить другое видео</button>
-        </div>
-
-        <div class="clips" id="clipsList">
-          <!-- Карточки можно генерировать динамически из backend/API -->
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="video-label">AI PREVIEW</div>
+          <div class="video-title">LONG VIDEO<br>TO SHORTS</div>
+          <div class="subtitle-strip">ИИ находит самые цепляющие фрагменты</div>
         </div>
       </div>
     </section>
 
-    <p class="footer-note">Demo UI: готово для дальнейшей привязки к backend, очереди задач и реальной загрузке файлов.</p>
+    <section class="panel" id="uploadPanel">
+      <label class="dropzone" id="dropzone">
+        <input class="file-input" id="videoInput" type="file" accept="video/mp4,video/quicktime,video/webm" />
+        <div class="drop-inner">
+          <div class="upload-icon">
+            <svg width="38" height="38" viewBox="0 0 24 24" fill="none">
+              <path d="M12 15V3M12 3L7 8M12 3L17 8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M4 15V18C4 19.657 5.343 21 7 21H17C18.657 21 20 19.657 20 18V15" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <p class="drop-title">Загрузите видео для нарезки</p>
+          <p class="drop-text">MP4, MOV, WEBM · демо без реальной отправки файла</p>
+        </div>
+      </label>
+
+      <div class="selected-file" id="selectedFile">
+        <div>
+          <p class="file-name" id="fileName">video.mp4</p>
+          <p class="file-hint">Файл выбран. Можно запускать AI-анализ.</p>
+        </div>
+        <button class="btn" id="startBtn">Запустить анализ</button>
+      </div>
+    </section>
+
+    <section class="panel processing" id="processingPanel">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">AI анализирует видео</h2>
+          <p class="section-desc">Демо имитирует распознавание речи, поиск сильных фрагментов и подготовку вертикальных клипов.</p>
+        </div>
+        <button class="btn secondary" id="cancelBtn">Отменить</button>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="progress-meta">
+          <span id="progressText">Загрузка видео</span>
+          <span id="progressPercent">0%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="steps">
+          <div class="step active" id="step1">1. Распознаём речь</div>
+          <div class="step" id="step2">2. Ищем сильные моменты</div>
+          <div class="step" id="step3">3. Готовим клипы</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel results" id="resultsPanel">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">Найденные клипы</h2>
+          <p class="section-desc">Так может выглядеть результат после AI-анализа длинного видео.</p>
+        </div>
+        <button class="btn secondary" id="newVideoBtn">Загрузить другое видео</button>
+      </div>
+
+      <div class="clips" id="clipsList"></div>
+    </section>
+
+    <p class="footer-note">Demo UI для GitHub Pages: HTML + CSS + JS, без сервера, npm и React.</p>
   </main>
 
   <script>
-    // Мини-логика для демо: выбор файла → запуск анализа → прогресс → результаты.
     const input = document.getElementById('videoInput');
-    const dropzone = document.getElementById('dropzone');
     const selectedFile = document.getElementById('selectedFile');
     const fileName = document.getElementById('fileName');
     const startBtn = document.getElementById('startBtn');
@@ -492,49 +620,21 @@
     let progressTimer = null;
 
     const demoClips = [
-      {
-        title: 'Сильный хук для Reels',
-        timecode: '00:01:12 — 00:01:39',
-        desc: 'Фрагмент с понятным началом, быстрым смыслом и хорошей динамикой для короткого ролика.'
-      },
-      {
-        title: 'Экспертный момент',
-        timecode: '00:04:08 — 00:04:42',
-        desc: 'Короткая выжимка с полезной мыслью, которую можно использовать как образовательный Shorts.'
-      },
-      {
-        title: 'Эмоциональная кульминация',
-        timecode: '00:08:20 — 00:08:57',
-        desc: 'Самый живой момент видео: подходит для TikTok, сторис и вовлекающего контента.'
-      }
+      { title: 'Сильный хук для Reels', timecode: '00:01:12 — 00:01:39', desc: 'Фрагмент с понятным началом, быстрым смыслом и хорошей динамикой.' },
+      { title: 'Экспертный момент', timecode: '00:04:08 — 00:04:42', desc: 'Короткая выжимка с полезной мыслью для образовательного Shorts.' },
+      { title: 'Эмоциональная кульминация', timecode: '00:08:20 — 00:08:57', desc: 'Живой момент видео для TikTok, сторис и вовлекающего контента.' }
     ];
 
-    function handleFile(file) {
+    renderClips(demoClips);
+
+    input.addEventListener('change', (event) => {
+      const file = event.target.files[0];
       if (!file) return;
       fileName.textContent = file.name;
       selectedFile.classList.add('active');
-      resultsPanel.classList.remove('active');
       processingPanel.classList.remove('active');
-    }
-
-    input.addEventListener('change', (event) => handleFile(event.target.files[0]));
-
-    // Drag & drop для удобства на компьютере.
-    ['dragenter', 'dragover'].forEach((eventName) => {
-      dropzone.addEventListener(eventName, (event) => {
-        event.preventDefault();
-        dropzone.classList.add('dragover');
-      });
+      resultsPanel.classList.remove('active');
     });
-
-    ['dragleave', 'drop'].forEach((eventName) => {
-      dropzone.addEventListener(eventName, (event) => {
-        event.preventDefault();
-        dropzone.classList.remove('dragover');
-      });
-    });
-
-    dropzone.addEventListener('drop', (event) => handleFile(event.dataTransfer.files[0]));
 
     startBtn.addEventListener('click', () => {
       processingPanel.classList.add('active');
@@ -543,25 +643,23 @@
       processingPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 
-    cancelBtn.addEventListener('click', resetProcessing);
+    cancelBtn.addEventListener('click', () => resetProcessing(true));
+
     newVideoBtn.addEventListener('click', () => {
       input.value = '';
       selectedFile.classList.remove('active');
-      resultsPanel.classList.remove('active');
       processingPanel.classList.remove('active');
+      resultsPanel.classList.remove('active');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
     function startProcessing() {
       let progress = 0;
       resetProcessing(false);
-
       progressTimer = setInterval(() => {
-        progress += Math.floor(Math.random() * 9) + 4;
+        progress += Math.floor(Math.random() * 8) + 5;
         if (progress >= 100) progress = 100;
-
         updateProgress(progress);
-
         if (progress >= 100) {
           clearInterval(progressTimer);
           progressTimer = null;
@@ -569,12 +667,12 @@
           resultsPanel.classList.add('active');
           resultsPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
-      }, 520);
+      }, 420);
     }
 
     function updateProgress(progress) {
-      progressFill.style.width = `${progress}%`;
-      progressPercent.textContent = `${progress}%`;
+      progressFill.style.width = progress + '%';
+      progressPercent.textContent = progress + '%';
 
       if (progress < 35) {
         progressText.textContent = 'Распознаём речь и структуру видео';
